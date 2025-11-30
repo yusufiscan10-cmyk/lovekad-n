@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    
+    <title>Sumru ❤️</title>
+
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2530/2530863.png">
+
+    <style>
+        /* --- GENEL AYARLAR --- */
+        :root {
+            --ios-blue: #007AFF;
+            --ios-gray: #F2F2F7;
+            --ios-blur: blur(25px);
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --safe-area-top: env(safe-area-inset-top);
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: var(--font-stack);
+            overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- IPHONE ÇERÇEVESİ (Bilgisayarda Önizleme İçin) --- */
+        .iphone-frame {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 50px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border: 10px solid #222;
+            overflow: hidden;
+        }
+
+        /* --- MOBİL CİHAZDA ÇERÇEVEYİ KALDIR (Tam Ekran Modu) --- */
+        @media (max-width: 500px) {
+            .iphone-frame {
+                width: 100%;
+                height: 100%;
+                border: none;
+                border-radius: 0;
+            }
+        }
+
+        /* --- DUVAR KAĞIDI --- */
+        .wallpaper {
+            width: 100%;
+            height: 100%;
+            /* Arka plan görseli veya rengi */
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        /* --- EKRAN YAPISI --- */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            z-index: 10;
+            /* Çentik ve alt çizgi boşlukları */
+            padding-top: max(40px, var(--safe-area-top)); 
+            padding-bottom: max(20px, var(--safe-area-bottom));
+            box-sizing: border-box;
+        }
+
+        /* --- KİLİT EKRANI --- */
+        #lock-screen {
+            justify-content: flex-start;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .lock-icon { margin-top: 10px; font-size: 20px; }
+
+        .time {
+            font-size: 85px;
+            font-weight: 200;
+            margin: 0;
+            line-height: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .date {
+            font-size: 22px;
+            font-weight: 500;
+            margin-top: 5px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Bildirim */
+        .notification {
+            margin-top: 50px;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: var(--ios-blur);
+            -webkit-backdrop-filter: var(--ios-blur);
+            width: 88%;
+            border-radius: 20px;
+            padding: 15px;
+            color: black;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .notif-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #444;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .notif-content h4 { margin: 0; font-size: 16px; font-weight: 700;}
+        .notif-content p { margin: 3px 0 0; font-size: 15px; color: #111;}
+
+        .swipe-hint {
+            position: absolute;
+            bottom: 40px;
+            width: 100%;
+            text-align: center;
+            font-size: 15px;
+            opacity: 0.8;
+            font-weight: 500;
+            animation: bounce 2s infinite;
+        }
+
+        .home-bar {
+            position: absolute;
+            bottom: 8px;
+            width: 140px;
+            height: 5px;
+            background: white;
+            border-radius: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* --- ANA EKRAN --- */
+        #home-screen {
+            transform: translateY(100%);
+            justify-content: flex-start;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px 15px;
+            width: 90%;
+            margin-top: 30px;
+        }
+
+        .app-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .app-icon:active { transform: scale(0.9); opacity: 0.8; }
+
+        .icon-box {
+            width: 62px;
+            height: 62px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            color: white;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            margin-bottom: 6px;
+        }
+        
+        .icon-label {
+            font-size: 12px;
+            font-weight: 500;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* Özel İkonlar */
+        .photos { background: linear-gradient(180deg, #ff9a9e 0%, #fecfef 100%); }
+        .notes { background: linear-gradient(180deg, #fccb90 0%, #d57eeb 100%); }
+        .music { background: linear-gradient(180deg, #fa709a 0%, #fee140 100%); }
+        .maps { background: linear-gradient(180deg, #8fd3f4 0%, #84fab0 100%); }
+
+        /* Dock */
+        .dock {
+            position: absolute;
+            bottom: 30px;
+            width: 90%;
+            height: 95px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border-radius: 35px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* --- UYGULAMA PENCERELERİ (MODAL) --- */
+        .app-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            color: #000;
+            z-index: 20;
+            transform: scale(0.95) translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+            display: flex;
+            flex-direction: column;
+            border-radius: 40px;
+            overflow: hidden;
+        }
+
+        .app-modal.active {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+            border-radius: 0;
+        }
+
+        .modal-header {
+            padding: max(50px, var(--safe-area-top)) 20px 15px;
+            font-size: 24px;
+            font-weight: 700;
+            background: rgba(249, 249, 249, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .close-btn {
+            font-size: 16px;
+            color: var(--ios-blue);
+            cursor: pointer;
+            background: rgba(230, 230, 230, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            font-weight: 600;
+        }
+
+        .modal-content {
+            padding: 20px;
+            overflow-y: auto;
+            height: 100%;
+            background: #fff;
+            padding-bottom: 80px; /* Alttaki bar için boşluk */
+        }
+
+        /* Animasyonlar */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-8px);} 60% {transform: translateY(-4px);} }
+
+        /* İçerik Özelleştirmeleri */
+        .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .photo-grid img { width: 100%; border-radius: 10px; height: 150px; object-fit: cover; }
+        .wide-img { grid-column: span 2; height: 200px !important; }
+        
+        .note-paper {
+            background: #fffdf2;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            font-family: 'Marker Felt', 'Comic Sans MS', sans-serif;
+            color: #444;
+            line-height: 1.6;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="iphone-frame">
+        <div class="wallpaper"></div>
+        
+        <div id="lock-screen" class="screen">
+            <div class="lock-icon">🔒</div>
+            <div class="time" id="clock">--:--</div>
+            <div class="date" id="date">...</div>
+
+            <div class="notification" onclick="unlockPhone()">
+                <div class="notif-header">
+                    <span>MESAJLAR</span>
+                    <span>ŞİMDİ</span>
+                </div>
+                <div class="notif-content">
+                    <h4>Sumru ❤️</h4>
+                    <p>Sana özel bir uygulama yaptım! Açmak için tıkla...</p>
+                </div>
+            </div>
+
+            <div class="swipe-hint" onclick="unlockPhone()">Kilidi Açmak İçin Yukarı Kaydır</div>
+            <div class="home-bar"></div>
+        </div>
+
+        <div id="home-screen" class="screen">
+            
+            <div class="app-grid">
+                <div class="app-icon" onclick="openApp('photos')">
+                    <div class="icon-box photos">📸</div>
+                    <span class="icon-label">Anılarımız</span>
+                </div>
+                <div class="app-icon" onclick="openApp('notes')">
+                    <div class="icon-box notes">📝</div>
+                    <span class="icon-label">Mektup</span>
+                </div>
+                <div class="app-icon" onclick="openApp('music')">
+                    <div class="icon-box music">🎵</div>
+                    <span class="icon-label">Şarkımız</span>
+                </div>
+                <div class="app-icon" onclick="openApp('maps')">
+                    <div class="icon-box maps">📍</div>
+                    <span class="icon-label">Konum</span>
+                </div>
+            </div>
+
+            <div class="dock">
+                <div class="app-icon"><div class="icon-box" style="background: #4CD964; width:50px; height:50px; font-size:24px;">📞</div></div>
+                <div class="app-icon"><div class="icon-box" style="background: #5AC8FA; width:50px; height:50px; font-size:24px;">📧</div></div>
+                <div class="app-icon"><div class="icon-box" style="background: #fff; color:black; width:50px; height:50px; font-size:24px;">💬</div></div>
+                <div class="app-icon"><div class="icon-box" style="background: #FF2D55; width:50px; height:50px; font-size:24px;">❤️</div></div>
+            </div>
+
+            <div class="home-bar"></div>
+        </div>
+
+        <div id="app-photos" class="app-modal">
+            <div class="modal-header">
+                <span>Bizim Albüm</span>
+                <button class="close-btn" onclick="closeApp('photos')">Kapat</button>
+            </div>
+            <div class="modal-content">
+                <div class="photo-grid">
+                    <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=500" class="wide-img">
+                    <img src="https://images.unsplash.com/photo-1621600411688-4be93cd68504?w=500">
+                    <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=500">
+                    <img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?w=500" class="wide-img">
+                </div>
+            </div>
+            <div class="home-bar" style="background: #000; opacity: 0.1;"></div>
+        </div>
+
+        <div id="app-notes" class="app-modal">
+            <div class="modal-header">
+                <span>Notlar</span>
+                <button class="close-btn" onclick="closeApp('notes')">Kapat</button>
+            </div>
+            <div class="modal-content" style="background: #f2f2f7;">
+                <h3 style="margin-top:0; padding-left:10px; color:#333;">Sumru'ya...</h3>
+                <div class="note-paper">
+                    <p><b>Sevgilim,</b></p>
+                    <p>Bugün senin için biraz kod yazdım... 😊</p>
+                    <p>Bu ekranın arkasında sadece 1 ve 0'lar yok, sana olan kocaman sevgim var. Telefonuna her baktığında, bu küçük uygulama sana ne kadar özel olduğunu hatırlatsın istedim.</p>
+                    <p>Nice güzel anılarımıza...</p>
+                    <p align="right" style="margin-top:20px;"><b>Seni Seviyorum ❤️</b></p>
+                </div>
+            </div>
+            <div class="home-bar" style="background: #000; opacity: 0.1;"></div>
+        </div>
+
+        <div id="app-music" class="app-modal">
+            <div class="modal-header">
+                <span>Müzik</span>
+                <button class="close-btn" onclick="closeApp('music')">Kapat</button>
+            </div>
+            <div class="modal-content" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <div style="width:250px; height:250px; background:#ddd; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin-bottom:30px; display:flex; align-items:center; justify-content:center; font-size:80px; background:linear-gradient(to right, #ff9966, #ff5e62); color:white;">
+                    🎵
+                </div>
+                <h2>Bizim Şarkımız</h2>
+                <p style="color:#888; margin-top:5px;">Sen ve Ben</p>
+                
+                <div style="width:100%; margin-top:40px; display:flex; justify-content:center; gap:40px; font-size:35px;">
+                    <span>⏮️</span>
+                    <span>▶️</span>
+                    <span>⏭️</span>
+                </div>
+            </div>
+            <div class="home-bar" style="background: #000; opacity: 0.1;"></div>
+        </div>
+
+        <div id="app-maps" class="app-modal">
+            <div class="modal-header">
+                <span>Konum</span>
+                <button class="close-btn" onclick="closeApp('maps')">Kapat</button>
+            </div>
+            <div class="modal-content">
+                <div style="background:#e5e5ea; width:100%; height:300px; border-radius:15px; display:flex; align-items:center; justify-content:center; color:#888; margin-bottom:20px;">
+                    🗺️ Harita Yükleniyor...
+                </div>
+                <h3>İlk Buluşma</h3>
+                <p style="color:#555;">Burası her şeyin başladığı yer...</p>
+            </div>
+            <div class="home-bar" style="background: #000; opacity: 0.1;"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- SAAT GÜNCELLEME ---
+        function updateTime() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock').innerText = `${hours}:${minutes}`;
+
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            document.getElementById('date').innerText = now.toLocaleDateString('tr-TR', options);
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // --- EKRAN GEÇİŞLERİ ---
+        function unlockPhone() {
+            document.getElementById('lock-screen').style.transform = 'translateY(-100%)';
+            document.getElementById('home-screen').style.transform = 'translateY(0)';
+        }
+
+        function openApp(appName) {
+            const modal = document.getElementById(`app-${appName}`);
+            if(modal) modal.classList.add('active');
+        }
+
+        function closeApp(appName) {
+            const modal = document.getElementById(`app-${appName}`);
+            if(modal) modal.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
